@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 
-import { useState, useRef } from "react"
-import { cn } from "@/lib/utils"
+import { useState, useRef } from "react";
+import { cn } from "@/lib/utils";
 import {
   Send,
   Paperclip,
@@ -14,24 +14,25 @@ import {
   FileScan,
   Upload,
   X,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
+  Search,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface Tool {
-  id: string
-  name: string
-  icon: React.ReactNode
-  description: string
-  color: string
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  description: string;
+  color: string;
 }
 
 const tools: Tool[] = [
   {
-    id: "analysis",
-    name: "专利解析",
-    icon: <FileScan className="h-5 w-5" />,
-    description: "深度解析专利",
-    color: "bg-rose-500/10 text-rose-600 hover:bg-rose-500/20",
+    id: "patent-search",
+    name: "专利检索",
+    icon: <Search className="h-5 w-5" />,
+    description: "全库专利检索",
+    color: "bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500/20",
   },
   {
     id: "disclosure",
@@ -54,62 +55,79 @@ const tools: Tool[] = [
     description: "生成检索报告",
     color: "bg-amber-500/10 text-amber-600 hover:bg-amber-500/20",
   },
-]
+  {
+    id: "analysis",
+    name: "专利解析",
+    icon: <FileScan className="h-5 w-5" />,
+    description: "深度解析专利",
+    color: "bg-rose-500/10 text-rose-600 hover:bg-rose-500/20",
+  },
+];
 
 interface ChatInputProps {
-  onSend?: (message: string, tool?: string) => void
+  onSend?: (message: string, tool?: string) => void;
 }
 
 export function ChatInput({ onSend }: ChatInputProps) {
-  const [message, setMessage] = useState("")
-  const [selectedTool, setSelectedTool] = useState<string | null>(null)
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [message, setMessage] = useState("");
+  const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 判断是否需要文件上传
-  const needsFileUpload = selectedTool === "search-formula" || selectedTool === "report"
+  const needsFileUpload =
+    selectedTool === "search-formula" ||
+    selectedTool === "report" ||
+    selectedTool === "analysis";
 
   const handleSend = () => {
     // 专利交底书直接进入工作流
     if (selectedTool === "disclosure") {
-      onSend?.("开始专利交底书流程", selectedTool)
-      setSelectedTool(null)
-      return
+      onSend?.("开始专利交底书流程", selectedTool);
+      setSelectedTool(null);
+      return;
     }
-    
+
     if (needsFileUpload && uploadedFile) {
-      onSend?.(`已上传文件：${uploadedFile.name}`, selectedTool || undefined)
-      setUploadedFile(null)
+      onSend?.(`已上传文件：${uploadedFile.name}`, selectedTool || undefined);
+      setUploadedFile(null);
     } else if (!needsFileUpload && message.trim()) {
-      onSend?.(message, selectedTool || undefined)
-      setMessage("")
+      onSend?.(message, selectedTool || undefined);
+      setMessage("");
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+      e.preventDefault();
+      handleSend();
     }
-  }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
-      setUploadedFile(file)
+      setUploadedFile(file);
     }
-  }
+  };
 
   const handleUploadClick = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   const handleRemoveFile = () => {
-    setUploadedFile(null)
+    setUploadedFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
-  }
+  };
+
+  const getUploadText = () => {
+    if (selectedTool === "analysis") return "上传专利文件";
+    if (selectedTool === "search-formula") return "上传技术交底书";
+    if (selectedTool === "report") return "上传技术交底书";
+    return "上传文件";
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto px-4 pb-6">
@@ -119,7 +137,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,.doc,.docx"
+          accept=".doc,.docx"
           onChange={handleFileChange}
           className="hidden"
         />
@@ -132,7 +150,9 @@ export function ChatInput({ onSend }: ChatInputProps) {
                 <div className="flex items-center gap-3">
                   <FileText className="h-5 w-5 text-primary" />
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-foreground">{uploadedFile.name}</span>
+                    <span className="text-sm font-medium text-foreground">
+                      {uploadedFile.name}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {(uploadedFile.size / 1024).toFixed(2)} KB
                     </span>
@@ -155,10 +175,10 @@ export function ChatInput({ onSend }: ChatInputProps) {
                 <Upload className="h-6 w-6 text-muted-foreground" />
                 <div className="flex flex-col items-start">
                   <span className="text-sm font-medium text-foreground">
-                    上传专利交底书
+                    {getUploadText()}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    支持 PDF、DOC、DOCX 格式
+                    支持 DOC、DOCX 格式
                   </span>
                 </div>
               </button>
@@ -187,16 +207,16 @@ export function ChatInput({ onSend }: ChatInputProps) {
                 onClick={() => {
                   // 专利交底书直接触发工作流
                   if (tool.id === "disclosure") {
-                    onSend?.("开始专利交底书流程", "disclosure")
-                    return
+                    onSend?.("开始专利交底书流程", "disclosure");
+                    return;
                   }
-                  setSelectedTool(selectedTool === tool.id ? null : tool.id)
+                  setSelectedTool(selectedTool === tool.id ? null : tool.id);
                 }}
                 className={cn(
                   "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-colors",
                   selectedTool === tool.id
                     ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
               >
                 {tool.icon}
@@ -208,20 +228,6 @@ export function ChatInput({ onSend }: ChatInputProps) {
           {/* Right Side - Actions */}
           <div className="flex items-center gap-2">
             <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 text-muted-foreground hover:text-foreground"
-            >
-              <Globe className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 text-muted-foreground hover:text-foreground"
-            >
-              <Paperclip className="h-4 w-4" />
-            </Button>
-            <Button
               onClick={handleSend}
               disabled={needsFileUpload ? !uploadedFile : !message.trim()}
               size="icon"
@@ -229,7 +235,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
                 "h-9 w-9 rounded-full transition-all",
                 (needsFileUpload ? uploadedFile : message.trim())
                   ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                  : "bg-muted text-muted-foreground"
+                  : "bg-muted text-muted-foreground",
               )}
             >
               <Send className="h-4 w-4" />
@@ -238,5 +244,5 @@ export function ChatInput({ onSend }: ChatInputProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { User, Bot } from "lucide-react"
+import { cn } from "@/lib/utils";
+import { User, Bot } from "lucide-react";
 
 export interface Message {
-  id: string
-  role: "user" | "assistant"
-  content: string
-  timestamp: Date
-  tool?: string
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  tool?: string;
 }
 
 interface ChatMessageProps {
-  message: Message
+  message: Message;
 }
 
 export function ChatMessage({ message }: ChatMessageProps) {
-  const isUser = message.role === "user"
+  const isUser = message.role === "user";
 
   return (
     <div
       className={cn(
         "flex w-full gap-4 px-4 py-6",
-        isUser ? "bg-background" : "bg-muted/30"
+        isUser ? "bg-background" : "bg-muted/30",
       )}
     >
       <div className="flex w-full max-w-3xl mx-auto gap-4">
@@ -32,7 +32,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
             isUser
               ? "bg-primary/10 text-primary"
-              : "bg-primary text-primary-foreground"
+              : "bg-primary text-primary-foreground",
           )}
         >
           {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
@@ -56,5 +56,5 @@ export function ChatMessage({ message }: ChatMessageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

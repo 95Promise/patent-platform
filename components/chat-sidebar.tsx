@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 
-import { useState } from "react"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 import {
   Search,
   FileText,
@@ -15,22 +15,22 @@ import {
   ChevronRight,
   MoreHorizontal,
   PanelLeftClose,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ChatItem {
-  id: string
-  title: string
-  date: string
+  id: string;
+  title: string;
+  date: string;
 }
 
 interface FolderData {
-  id: string
-  name: string
-  icon: React.ReactNode
-  chats: ChatItem[]
-  isOpen: boolean
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  chats: ChatItem[];
+  isOpen: boolean;
 }
 
 const initialFolders: FolderData[] = [
@@ -70,9 +70,14 @@ const initialFolders: FolderData[] = [
     name: "专利检索报告",
     icon: <FileText className="h-4 w-4" />,
     isOpen: false,
-    chats: [
-      { id: "r1", title: "无线充电技术检索报告", date: "3天前" },
-    ],
+    chats: [{ id: "r1", title: "无线充电技术检索报告", date: "3天前" }],
+  },
+  {
+    id: "patent-search",
+    name: "专利检索",
+    icon: <Search className="h-4 w-4" />,
+    isOpen: false,
+    chats: [{ id: "ps1", title: "量子计算专利检索", date: "今天" }],
   },
   {
     id: "analysis",
@@ -84,20 +89,20 @@ const initialFolders: FolderData[] = [
       { id: "a2", title: "US20230001234解析", date: "昨天" },
     ],
   },
-]
+];
 
 export function ChatSidebar() {
-  const [folders, setFolders] = useState<FolderData[]>(initialFolders)
-  const [activeChat, setActiveChat] = useState<string>("g1")
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [folders, setFolders] = useState<FolderData[]>(initialFolders);
+  const [activeChat, setActiveChat] = useState<string>("g1");
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleFolder = (folderId: string) => {
     setFolders((prev) =>
       prev.map((folder) =>
-        folder.id === folderId ? { ...folder, isOpen: !folder.isOpen } : folder
-      )
-    )
-  }
+        folder.id === folderId ? { ...folder, isOpen: !folder.isOpen } : folder,
+      ),
+    );
+  };
 
   if (isCollapsed) {
     return (
@@ -128,11 +133,11 @@ export function ChatSidebar() {
               className={cn(
                 "h-9 w-9 text-sidebar-foreground hover:bg-sidebar-accent",
                 folders.find((f) => f.chats.some((c) => c.id === activeChat))
-                  ?.id === folder.id && "bg-sidebar-accent"
+                  ?.id === folder.id && "bg-sidebar-accent",
               )}
               onClick={() => {
-                setIsCollapsed(false)
-                toggleFolder(folder.id)
+                setIsCollapsed(false);
+                toggleFolder(folder.id);
               }}
             >
               {folder.icon}
@@ -140,7 +145,7 @@ export function ChatSidebar() {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -151,7 +156,9 @@ export function ChatSidebar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
             <FileText className="h-4 w-4 text-primary-foreground" />
           </div>
-          <span className="font-semibold text-sidebar-foreground">专利助手</span>
+          <span className="font-semibold text-sidebar-foreground">
+            专利助手
+          </span>
         </div>
         <Button
           variant="ghost"
@@ -203,7 +210,9 @@ export function ChatSidebar() {
                 ) : (
                   <FolderClosed className="h-4 w-4 text-primary" />
                 )}
-                <span className="flex-1 text-left font-medium">{folder.name}</span>
+                <span className="flex-1 text-left font-medium">
+                  {folder.name}
+                </span>
                 <span className="text-xs text-muted-foreground">
                   {folder.chats.length}
                 </span>
@@ -213,22 +222,30 @@ export function ChatSidebar() {
               {folder.isOpen && (
                 <div className="ml-4 space-y-0.5 border-l border-border pl-3">
                   {folder.chats.map((chat) => (
-                    <button
+                    <div
                       key={chat.id}
                       onClick={() => setActiveChat(chat.id)}
                       className={cn(
-                        "group flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors",
+                        "group flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors cursor-pointer",
                         activeChat === chat.id
                           ? "bg-sidebar-accent text-sidebar-foreground"
-                          : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                          : "text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
                       )}
                     >
                       <MessageSquare className="h-3.5 w-3.5 shrink-0" />
-                      <span className="flex-1 truncate text-left">{chat.title}</span>
-                      <button className="opacity-0 group-hover:opacity-100">
+                      <span className="flex-1 truncate text-left">
+                        {chat.title}
+                      </span>
+                      <div
+                        className="opacity-0 group-hover:opacity-100 hover:bg-background/20 rounded p-0.5"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // TODO: Implement menu actions
+                        }}
+                      >
                         <MoreHorizontal className="h-3.5 w-3.5" />
-                      </button>
-                    </button>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )}
@@ -252,5 +269,5 @@ export function ChatSidebar() {
         </div>
       </div>
     </div>
-  )
+  );
 }

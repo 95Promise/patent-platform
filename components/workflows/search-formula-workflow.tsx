@@ -17,6 +17,8 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { PatentSearchResults } from "@/components/patent-search-results";
+import { PatentItem } from "@/lib/types";
 
 interface SearchFormulaWorkflowProps {
   fileName: string;
@@ -39,15 +41,6 @@ interface TemplateOption {
   name: string;
   description: string;
   example: string;
-}
-
-interface PatentItem {
-  id: string;
-  title: string;
-  applicant: string;
-  publicationNumber: string;
-  publicationDate: string;
-  abstract: string;
 }
 
 // 模拟数据
@@ -697,38 +690,7 @@ export function SearchFormulaWorkflow({
                 </div>
 
                 <div className="grid gap-4">
-                  {searchResults.map((patent) => (
-                    <div
-                      key={patent.id}
-                      className="rounded-lg border border-border bg-card p-6 transition-all hover:shadow-md"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 pr-4">
-                          <div className="mb-2 flex items-center gap-2">
-                            <h4 className="text-lg font-semibold text-foreground">
-                              {patent.title}
-                            </h4>
-                          </div>
-                          <div className="mb-3 flex items-center gap-4 text-sm text-muted-foreground">
-                            <span>{patent.publicationNumber}</span>
-                            <span>{patent.applicant}</span>
-                            <span>{patent.publicationDate}</span>
-                          </div>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            <span className="font-semibold">摘要：</span>
-                            {patent.abstract}
-                          </p>
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="shrink-0 bg-transparent"
-                        >
-                          专利解析
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                  <PatentSearchResults results={searchResults} />
                 </div>
               </div>
             )}

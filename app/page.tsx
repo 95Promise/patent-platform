@@ -8,6 +8,7 @@ import { SearchFormulaWorkflow } from "@/components/workflows/search-formula-wor
 import { ReportWorkflow } from "@/components/workflows/report-workflow";
 import { DisclosureWorkflow } from "@/components/workflows/disclosure-workflow";
 import { AnalysisWorkflow } from "@/components/workflows/analysis-workflow";
+import { KeywordSearchWorkflow } from "@/components/workflows/keyword-search-workflow";
 import { Button } from "@/components/ui/button";
 import { Search, Settings, Moon } from "lucide-react";
 
@@ -47,9 +48,18 @@ export default function Home() {
   const [showReport, setShowReport] = useState(false);
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showKeywordSearch, setShowKeywordSearch] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleSendMessage = (content: string, tool?: string) => {
+    // 如果是专利检索工具，直接打开关键词搜索工作流页面
+    if (tool === "patent-search") {
+      setSearchQuery(content);
+      setShowKeywordSearch(true);
+      return;
+    }
+
     // 如果是专利检索式工具且上传了文件，打开专用工作流页面
     if (tool === "search-formula" && content.startsWith("已上传文件：")) {
       const fileName = content.replace("已上传文件：", "");
@@ -108,7 +118,9 @@ export default function Home() {
     setShowReport(false);
     setShowDisclosure(false);
     setShowAnalysis(false);
+    setShowKeywordSearch(false);
     setUploadedFileName("");
+    setSearchQuery("");
   };
 
   // 如果正在进行专利检索式工作流，显示专用页面
@@ -164,6 +176,21 @@ export default function Home() {
         <div className="flex flex-1 flex-col">
           <AnalysisWorkflow
             fileName={uploadedFileName}
+            onBack={handleBackFromWorkflow}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // 如果正在进行关键词搜索工作流，显示专用页面
+  if (showKeywordSearch) {
+    return (
+      <div className="flex h-screen bg-background">
+        <ChatSidebar />
+        <div className="flex flex-1 flex-col">
+          <KeywordSearchWorkflow
+            initialQuery={searchQuery}
             onBack={handleBackFromWorkflow}
           />
         </div>

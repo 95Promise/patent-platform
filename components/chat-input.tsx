@@ -139,6 +139,13 @@ export function ChatInput({ onSend }: ChatInputProps) {
     return "支持 DOC、DOCX 格式";
   };
 
+  const getPlaceholderText = () => {
+    if (selectedTool === "patent-search") {
+      return "请输入关键词进行检索...";
+    }
+    return "向专利助手提问...";
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto px-4 pb-6">
       {/* Main Input Box */}
@@ -200,7 +207,7 @@ export function ChatInput({ onSend }: ChatInputProps) {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="向专利助手提问..."
+              placeholder={getPlaceholderText()}
               className="w-full resize-none bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none min-h-[60px] max-h-[200px]"
               rows={2}
             />

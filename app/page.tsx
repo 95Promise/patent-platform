@@ -36,7 +36,7 @@ const getAIResponse = (userMessage: string, tool?: string): string => {
     return "我将为您生成专利检索报告。报告将包括：\n\n1. 检索策略说明\n2. 相关专利列表\n3. 技术对比分析\n4. 新颖性评估\n5. 专利布局建议\n\n请提供您需要检索的技术主题和关键词。";
   }
   if (tool === "analysis") {
-    return "我将为您深度解析专利文献。分析内容包括：\n\n1. 权利要求解读\n2. 技术方案分析\n3. 创新点识别\n4. 保护范围评估\n5. 规避设计建议\n\n请提供需要分析的专利号或上传专利文件。";
+    return "我将为您深度解析专利文献。分析内容包括：\n\n1. 技术问题\n2. 技术手段\n3. 技术效果\n\n请提供需要分析的专利号或上传专利文件。";
   }
 
   return "您好！我是专利智能助手，专注于为您提供专利相关的专业服务。我可以帮助您：\n\n• 生成精准的专利检索式\n• 撰写规范的专利交底书\n• 制作详细的专利检索报告\n• 深度解析专利技术方案\n\n请告诉我您需要什么帮助，或选择底部的专业工具开始使用。";
@@ -49,6 +49,7 @@ export default function Home() {
   const [showDisclosure, setShowDisclosure] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showKeywordSearch, setShowKeywordSearch] = useState(false);
+  const [uploadedFileNames, setUploadedFileNames] = useState<string[]>([]);
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -84,8 +85,9 @@ export default function Home() {
 
     // 如果是专利解析工具且上传了文件，打开专用工作流页面
     if (tool === "analysis" && content.startsWith("已上传文件：")) {
-      const fileName = content.replace("已上传文件：", "");
-      setUploadedFileName(fileName);
+      const fileNamesStr = content.replace("已上传文件：", "");
+      const fileNames = fileNamesStr.split("、");
+      setUploadedFileNames(fileNames);
       setShowAnalysis(true);
       return;
     }
@@ -175,7 +177,22 @@ export default function Home() {
         <ChatSidebar />
         <div className="flex flex-1 flex-col">
           <AnalysisWorkflow
-            fileName={uploadedFileName}
+            fileNames={uploadedFileNames}
+            onBack={handleBackFromWorkflow}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // 如果正在进行关键词搜索工作流，显示专用页面
+  if (showKeywordSearch) {
+    return (
+      <div className="flex h-screen bg-background">
+        <ChatSidebar />
+        <div className="flex flex-1 flex-col">
+          <KeywordSearchWorkflow
+            initialQuery={searchQuery}
             onBack={handleBackFromWorkflow}
           />
         </div>

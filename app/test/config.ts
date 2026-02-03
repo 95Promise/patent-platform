@@ -1,4 +1,4 @@
-import { FileText, Search, Type, FileOutput } from "lucide-react";
+import { FileText, Search, Type, FileOutput, Sparkles } from "lucide-react";
 
 export interface TestMenuItem {
   title: string;
@@ -21,6 +21,11 @@ export const testConfig: TestMenuItem[] = [
         title: "技术背景生成",
         url: "/test/disclosure/background-generation",
         icon: Type,
+      },
+      {
+        title: "技术方案优化",
+        url: "/test/disclosure/proposal-text-optimization",
+        icon: Sparkles,
       },
     ],
   },

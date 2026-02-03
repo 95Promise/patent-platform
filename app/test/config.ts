@@ -23,9 +23,9 @@ export const testConfig: TestMenuItem[] = [
         icon: Type,
       },
       {
-        title: "关键词解释",
-        url: "/test/disclosure/explanation-of-keywords",
-        icon: Search,
+        title: "技术方案优化",
+        url: "/test/disclosure/proposal-text-optimization",
+        icon: Sparkles,
       },
       {
         title: "有益效果生成",
